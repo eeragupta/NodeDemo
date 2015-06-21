@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>{{ title }}</title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+	<h1>{{ title }}</h1>
+	<p>Welcome to {{ title }}.</p>
+	Name:<input type="text" name="name" id="name"><br>
+	Message:<br> <textarea name="message" id="message"></textarea><br>
+	<button id="submit">Submit</button>
+	<hr>
+	<table border="1" id="messageTable">
+		<tr>
+			<th>Name</th>
+			<th>Message</th>
+		</tr>
+	</table>
+	<script type="text/javascript">
+	var socket = io.connect();
+	$("#submit").click(function(event) {
+		socket.emit('submitMessage', {name: $("#name").val(), comment: $("#message").val()});
+	});
+
+	var getmsg = function(){
+		socket.emit('getMessage', {}, function(data){
+			console.log(data);
+			$("#messageTable").html('<tr><th>Name</th><th>Message</th></tr>');
+			for (var i = 0; i < data.length; i++) {
+				var newRow = $("<tr></tr>").append("<td>"+data[i].name+"</td>").append("<td>"+data[i].comment+"</td>");
+				$("#messageTable").append(newRow);
+			};
+		});
+	};
+
+	setInterval(getmsg, 1000);
+	</script>
+  </body>
+</html>

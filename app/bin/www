@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+
+var debug = require('debug')('app');
+var app = require('../app');
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+    host: process.env.MYSQL_1_PORT_3306_TCP_ADDR,
+    user: 'root',
+    password: process.env.MYSQL_1_ENV_MYSQL_ROOT_PASSWORD
+});
+
+connection.connect(function(err) {
+    if (err) {
+        console.error('error connecting: ' + err.stack);
+        return;
+    }
+
+    console.log('connected as id ' + connection.threadId);
+});
+
+connection.query('SHOW DATABASES;', function(err, rows, fields) {
+  if (err) throw err;
+
+  for (var i = 0; i < rows.length; i++) {
+      console.log('The ' + i + '\'th row is: ', rows[i]);
+  }
+
+  connection.query('CREATE DATABASE IF NOT EXISTS nodeappDB;', function(err, rows, fields) {
+    if (err) throw err;
+    connection.query('USE nodeappDB;', function(err, rows, fields) {
+      if (err) throw err;
+      connection.query('CREATE TABLE IF NOT EXISTS messages(name varchar(20),comment varchar(500));', function(err, rows, fields) {
+        if (err) throw err;
+        connection.query('SHOW TABLES', function(err, rows, fields) {
+          if (err) throw err;
+          for (var i = 0; i < rows.length; i++) {
+            console.log('The ' + i + '\'th row is: ', rows[i]);
+          }
+
+        });
+      });
+    });
+  });
+});
+
+
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+    debug('Express server listening on port ' + server.address().port);
+});
+
+var io = require('socket.io')(server);
+
+io.on('connection', function(socket){
+  socket.on('getMessage', function(data, reply){
+    // Mysql Query to fetch messages
+    var query = connection.query("SELECT * FROM messages; ", function(err, rows, fields){
+      if(err) throw err;
+      reply(rows);
+    }); 
+    console.log(query.sql);
+  });
+  socket.on('submitMessage', function(data){
+    //Mysql Query to submit messages
+    var query = connection.query("INSERT INTO messages SET ?", data, function(err, rows, fields){
+      if(err) throw err;
+    });
+    console.log(query.sql);
+  });
+});
+
+
+//Shutdown
+process.once('SIGUSR2', function () {
+    connection.end();
+    process.kill(process.pid, 'SIGUSR2');
+});
