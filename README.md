@@ -36,7 +36,3 @@ It [appears](https://github.com/boot2docker/boot2docker/issues/290) that boot2do
 ```bash
 /usr/local/bin/boot2docker ssh sudo ntpclient -s -h pool.ntp.org
 ```
-<<<<<<< HEAD
-=======
-http://www.nodejs.org) and MySQL inside a [Docker](http://www.docker.com) containers. It utilizes [docker compose](https://docs.docker.com/compose/) to run a multi-container setup. One container is the Node.js app and the other is a MySQL container. The file systems are mapped from the host. We are also using [nodemon](http://nodemon.io/) to run our Node.js app.
->>>>>>> f71b521f0a1c0c9e1af264fd7c1dbee9c05fd858
