@@ -1,6 +1,6 @@
 # Express app with MySQL and nodemon development server
 
-In this step we'll link a [MySQL](http://MySQL.io/) container to the app from [step 01](https://github.com/b00giZm/docker-compose-nodejs-examples/tree/master/01-express-nodemon).
+In this step we'll link a [MySQL](https://registry.hub.docker.com/_/mysql/) container to the app.
 
 ## Prerequisites
 
@@ -20,14 +20,14 @@ Run `docker-compose build`. It will
 
 * install [nodemon](https://github.com/remy/nodemon) globally in your container
 * install all dependencies from the package.json locally
-* expose port 3000 to the host
+* map port 3000 of container to port 80 to host
 * instruct the container to execute `npm start` on start up.
 
 ## Start
 
-Run `docker-compose up` to create and start both `web` and `db` container. The app should then be running on your docker daemon on port 3030 (On OS X you can use `boot2docker ip` to find out the IP address).
+Run `docker-compose up` to create and start both `web` and `db` container. The app should then be running on your docker daemon on port 80 (On OS X you can use `boot2docker ip` to find out the IP address).
 
-You should see a counter on the index page which will be incremented in MySQL on every request. See [app/routes/index.js](https://github.com/b00giZm/docker-compose-nodejs-examples/blob/master/02-express-MySQL-nodemon/app/routes/index.js) to learn how to conect to MySQL via [enviroment variables](http://docs.docker.com/compose/env/) exposed to the `web` container.
+This app demonstrates websockets using [Socket.IO](http://www.socket.io), [Node.js](http://www.nodejs.org) and MySQL inside a [Docker](http://www.docker.com) containers. It utilizes [docker compose](https://docs.docker.com/compose/) to run a multi-container setup. One container is the Node.js app and the other is a MySQL container. The file systems are mapped from the host. We are also using [nodemon](http://nodemon.io/) to run our Node.js app.
 
 ## Notes on boot2docker
 
